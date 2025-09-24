@@ -11,17 +11,17 @@ sudo apt update
 sudo apt install yaru-theme-gtk yaru-theme-icon ubuntu-wallpapers ubuntu-wallpapers-jammy ubuntu-wallpapers-impish plank dconf-cli xfce4-panel-profiles xfce4-appmenu-plugin git -y
 cd ~
 git clone https://github.com/ahksoft/ahk-modded-distro-ubuntu
-cd $user_home/ahk-modded-distro/theme/panel
+cd ~/ahk-modded-distro/theme/panel
 tar --sort=name --format ustar -cvjhf ubuntu.tar.bz2 config.txt
-mkdir -p $user_home/.local/share/xfce4-panel-profiles/
-mv $user_home/ahk-modded-distro/theme/panel/ubuntu.tar.bz2 $user_home/.local/share/xfce4-panel-profiles/
-dbus-launch xfce4-panel-profiles load $user_home/.local/share/xfce4-panel-profiles/ubuntu.tar.bz2
-mkdir -p $user_home/.config/autostart
-mv $user_home/ahk-modded-distro/theme/plank/plank.desktop $user_home/.config/autostart
-mkdir -p $user_home/.local/share/plank/themes
-mkdir -p $user_home/.config/plank/dock1/
-mv $user_home/ahk-modded-distro/theme/plank/launchers $user_home/.config/plank/dock1/
-mv $user_home/ahk-modded-distro/theme/plank/Azeny $user_home/.local/share/plank/themes
+mkdir -p ~/.local/share/xfce4-panel-profiles/
+mv ~/ahk-modded-distro/theme/panel/ubuntu.tar.bz2 ~/.local/share/xfce4-panel-profiles/
+dbus-launch xfce4-panel-profiles load ~/.local/share/xfce4-panel-profiles/ubuntu.tar.bz2
+mkdir -p ~/.config/autostart
+mv ~/ahk-modded-distro/theme/plank/plank.desktop ~/.config/autostart
+mkdir -p ~/.local/share/plank/themes
+mkdir -p ~/.config/plank/dock1/
+mv ~/ahk-modded-distro/theme/plank/launchers ~/.config/plank/dock1/
+mv ~/ahk-modded-distro/theme/plank/Azeny ~/.local/share/plank/themes
 
 
 echo
@@ -45,6 +45,5 @@ dbus-launch xfconf-query -c xfwm4 -p /general/show_dock_shadow -s false
 sleep 10
 dbus-launch xfconf-query -c xfce4-desktop -p $(dbus-launch xfconf-query -c xfce4-desktop -l | grep last-image) -s /usr/share/backgrounds/warty-final-ubuntu.png
 sleep 10
-cat $user_home/ahk-modded-distro/theme/plank/dock.ini | dbus-launch dconf load  /net/launchpad/plank/docks/dock1/
-rm -rf $user_home/ahk-modded-distro 
-
+cat ~/ahk-modded-distro/theme/plank/dock.ini | dbus-launch dconf load  /net/launchpad/plank/docks/dock1/
+rm -rf ~/ahk-modded-distro 
