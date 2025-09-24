@@ -80,7 +80,7 @@ rm $CHROOT/root/.bashrc
 install_theme(){
 echo ${G}"Installing Theme"${W}
 mv $CHROOT/home/ubuntu/.bashrc $CHROOT/home/ubuntu/.bashrc.bak
-echo "wget https://raw.githubusercontent.com/TecnicalBot/modded-distro/main/theme/theme.sh ; bash  theme.sh; exit" >> $CHROOT/home/ubuntu/.bashrc
+echo "wget https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/theme/theme.sh ; bash  theme.sh; exit" >> $CHROOT/home/ubuntu/.bashrc
 ubuntu
 rm $CHROOT/home/ubuntu/theme.sh*
 rm $CHROOT/home/ubuntu/.bashrc
@@ -129,7 +129,7 @@ EOF
 ubuntu
 rm $CHROOT/home/ubuntu/.bashrc
 mv $CHROOT/home/ubuntu/.bashrc.bak $CHROOT/home/ubuntu/.bashrc
-wget -O $(find $CHROOT/home/ubuntu/.mozilla/firefox -name *.default-esr)/user.js https://raw.githubusercontent.com/TecnicalBot/modded-distro/main/fixes/user.js
+wget -O $(find $CHROOT/home/ubuntu/.mozilla/firefox -name *.default-esr)/user.js https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/fixes/user.js
 }
 
 final_banner(){
