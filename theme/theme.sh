@@ -10,7 +10,7 @@ C="$(printf '\033[1;36m')"
 sudo apt update
 sudo apt install yaru-theme-gtk yaru-theme-icon ubuntu-wallpapers ubuntu-wallpapers-jammy ubuntu-wallpapers-impish plank dconf-cli xfce4-panel-profiles xfce4-appmenu-plugin git -y
 cd ~
-git clone https://github.com/TecnicalBot/modded-distro
+git clone https://github.com/ahksoft/ahk-modded-distro-ubuntu
 cd ~/modded-distro/theme/panel
 tar --sort=name --format ustar -cvjhf ubuntu.tar.bz2 config.txt
 mkdir -p ~/.local/share/xfce4-panel-profiles/
