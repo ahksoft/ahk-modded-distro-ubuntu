@@ -83,41 +83,25 @@ EOF
 }
 
 # --------------------------
-# Add user (optional)
+# Add user (ubuntu default)
 # --------------------------
 adding_user(){
-    echo -e "${Y}Do you want to add a new Ubuntu user? (y/n): ${W}"
-    read create_user
-    if [ "$create_user" = "y" ]; then
-        echo -ne "${Y}Enter username: ${W}"
-        read input_user
-        username="$input_user"
-    else
-        username="root"
-    fi
-
-    echo -e "${G}Adding user $username...${W}"
+    echo -e "${G}Adding a User...${W}"
     cat > $CHROOT/root/.bashrc <<- EOF
 apt-get update
 apt-get install -y sudo wget
 sleep 2
-if [ "$username" != "root" ]; then
-    useradd -m -s /bin/bash $username
-    echo "$username:ubuntu" | chpasswd
-    echo "$username  ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/$username
-fi
+useradd -m -s /bin/bash ubuntu
+echo "ubuntu:ubuntu" | chpasswd
+echo "ubuntu  ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/ubuntu
 sleep 2
 exit
 EOF
     proot-distro login ubuntu
-
-    if [ "$username" != "root" ]; then
-        echo "proot-distro login --user $username ubuntu" > $PREFIX/bin/ubuntu
-    else
-        echo "proot-distro login ubuntu" > $PREFIX/bin/ubuntu
-    fi
+    echo "proot-distro login --user ubuntu ubuntu" > $PREFIX/bin/ubuntu
     chmod +x $PREFIX/bin/ubuntu
-    rm -rf $CHROOT/root/.bashrc
+    rm $CHROOT/root/.bashrc
+    username="ubuntu"
 }
 
 # --------------------------
@@ -125,12 +109,7 @@ EOF
 # --------------------------
 install_theme(){
     echo -e "${G}Installing Theme...${W}"
-    if [ "$username" = "root" ]; then
-        user_home="$CHROOT/root"
-    else
-        user_home="$CHROOT/home/$username"
-    fi
-
+    user_home="$CHROOT/home/$username"
     [ -f "$user_home/.bashrc" ] && mv "$user_home/.bashrc" "$user_home/.bashrc.bak"
 
     echo "wget https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/theme/theme.sh ; bash theme.sh; exit" >> "$user_home/.bashrc"
@@ -157,34 +136,38 @@ pulseaudio --start \
     --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
     --exit-idle-time=-1
 EOF
+}
 
-    if [ "$username" = "root" ]; then
-        user_home="$CHROOT/root"
-    else
-        user_home="$CHROOT/home/$username"
-    fi
-
-    [ -f "$user_home/.bashrc" ] && mv "$user_home/.bashrc" "$user_home/.bashrc.bak"
-
-    cat > "$user_home/.bashrc" <<- EOF
-vncstart
+# --------------------------
+# Create x11start / x11stop
+# --------------------------
+create_x11start(){
+    echo -e "${G}Creating x11start and x11stop commands...${W}"
+    cat > $PREFIX/bin/x11start <<- 'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
+# Launch Termux:X11 app if installed
+am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity >/dev/null 2>&1 &
 sleep 4
-DISPLAY=:1 firefox &
-sleep 10
-pkill -f firefox
-vncstop
-sleep 4
-exit
+# Start pulseaudio
+pulseaudio --start \
+    --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
+    --exit-idle-time=-1 >/dev/null 2>&1 &
+# Export display and start XFCE
+export DISPLAY=:0
+proot-distro login --user ubuntu ubuntu -- /usr/bin/startxfce4 >/dev/null 2>&1 &
 EOF
+    chmod +x $PREFIX/bin/x11start
 
-    ubuntu
-    rm -f "$user_home/.bashrc"
-    [ -f "$user_home/.bashrc.bak" ] && mv "$user_home/.bashrc.bak" "$user_home/.bashrc"
-
-    FIREFOX_DIR=$(find $user_home/.mozilla/firefox -name "*.default-esr" 2>/dev/null | head -n1)
-    if [ -n "$FIREFOX_DIR" ]; then
-        wget -O "$FIREFOX_DIR/user.js" https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/fixes/user.js
-    fi
+    cat > $PREFIX/bin/x11stop <<- 'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
+# Kill pulseaudio
+pkill pulseaudio
+# Kill proot-distro XFCE session
+pkill -f startxfce4
+# Kill Termux:X11 if possible
+am force-stop com.termux.x11 >/dev/null 2>&1
+EOF
+    chmod +x $PREFIX/bin/x11stop
 }
 
 # --------------------------
@@ -195,9 +178,11 @@ final_banner(){
     echo
     echo -e "${G}Installation completed${W}\n"
     echo -e "${Y}Commands:${W}"
-    echo -e "  ${C}ubuntu${W}   - To start Ubuntu"
-    echo -e "  ${C}vncstart${W} - To start VNC server (inside Ubuntu)"
-    echo -e "  ${C}vncstop${W}  - To stop VNC server (inside Ubuntu)"
+    echo -e "  ${C}ubuntu${W}    - To start Ubuntu shell"
+    echo -e "  ${C}vncstart${W}  - To start VNC server (inside Ubuntu)"
+    echo -e "  ${C}vncstop${W}   - To stop VNC server (inside Ubuntu)"
+    echo -e "  ${C}x11start${W}  - To start XFCE on Termux:X11"
+    echo -e "  ${C}x11stop${W}   - To stop XFCE + Termux:X11"
     rm -rf ~/install.sh
 }
 
@@ -210,4 +195,5 @@ install_desktop
 adding_user
 install_theme
 sound_fix
+create_x11start
 final_banner
