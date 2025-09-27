@@ -34,7 +34,7 @@ detect_shell(){
 detect_shell
 
 CHROOT=$PREFIX/var/lib/proot-distro/installed-rootfs/ubuntu
-username="root"
+username="ubuntu"
 
 # --------------------------
 # Ubuntu install / reset
@@ -83,10 +83,10 @@ EOF
 }
 
 # --------------------------
-# Add user (ubuntu default)
+# Add default ubuntu user
 # --------------------------
 adding_user(){
-    echo -e "${G}Adding a User...${W}"
+    echo -e "${G}Adding default user 'ubuntu'...${W}"
     cat > $CHROOT/root/.bashrc <<- EOF
 apt-get update
 apt-get install -y sudo wget
@@ -98,10 +98,10 @@ sleep 2
 exit
 EOF
     proot-distro login ubuntu
+
     echo "proot-distro login --user ubuntu ubuntu" > $PREFIX/bin/ubuntu
     chmod +x $PREFIX/bin/ubuntu
-    rm $CHROOT/root/.bashrc
-    username="ubuntu"
+    rm -rf $CHROOT/root/.bashrc
 }
 
 # --------------------------
@@ -109,7 +109,8 @@ EOF
 # --------------------------
 install_theme(){
     echo -e "${G}Installing Theme...${W}"
-    user_home="$CHROOT/home/$username"
+    user_home="$CHROOT/home/ubuntu"
+
     [ -f "$user_home/.bashrc" ] && mv "$user_home/.bashrc" "$user_home/.bashrc.bak"
 
     echo "wget https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/theme/theme.sh ; bash theme.sh; exit" >> "$user_home/.bashrc"
@@ -139,35 +140,23 @@ EOF
 }
 
 # --------------------------
-# Create x11start / x11stop
+# Setup Termux X11
 # --------------------------
-create_x11start(){
-    echo -e "${G}Creating x11start and x11stop commands...${W}"
-    cat > $PREFIX/bin/x11start <<- 'EOF'
-#!/data/data/com.termux/files/usr/bin/sh
-# Launch Termux:X11 app if installed
-am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity >/dev/null 2>&1 &
-sleep 4
-# Start pulseaudio
-pulseaudio --start \
-    --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
-    --exit-idle-time=-1 >/dev/null 2>&1 &
-# Export display and start XFCE
-export DISPLAY=:0
-proot-distro login --user ubuntu ubuntu -- /usr/bin/startxfce4 >/dev/null 2>&1 &
-EOF
-    chmod +x $PREFIX/bin/x11start
+install_x11(){
+    echo -e "${G}Setting up Termux X11...${W}"
+    pkg install -y x11-repo termux-x11-nightly
 
-    cat > $PREFIX/bin/x11stop <<- 'EOF'
-#!/data/data/com.termux/files/usr/bin/sh
-# Kill pulseaudio
-pkill pulseaudio
-# Kill proot-distro XFCE session
-pkill -f startxfce4
-# Kill Termux:X11 if possible
-am force-stop com.termux.x11 >/dev/null 2>&1
-EOF
-    chmod +x $PREFIX/bin/x11stop
+    mkdir -p $HOME/.termux
+    if ! grep -q "allow-external-apps = true" $HOME/.termux/termux.properties 2>/dev/null; then
+        sed -i 's/^#allow-external-apps = true/allow-external-apps = true/' $HOME/.termux/termux.properties 2>/dev/null || \
+        echo "allow-external-apps = true" >> $HOME/.termux/termux.properties
+    fi
+
+    echo "termux-x11 :1 & 
+    sleep 2
+    proot-distro login --user ubuntu --shared-tmp ubuntu -- env DISPLAY=:1 startxfce4" > $PREFIX/bin/x11start
+
+    chmod +x $PREFIX/bin/x11start
 }
 
 # --------------------------
@@ -178,11 +167,12 @@ final_banner(){
     echo
     echo -e "${G}Installation completed${W}\n"
     echo -e "${Y}Commands:${W}"
-    echo -e "  ${C}ubuntu${W}    - To start Ubuntu shell"
-    echo -e "  ${C}vncstart${W}  - To start VNC server (inside Ubuntu)"
-    echo -e "  ${C}vncstop${W}   - To stop VNC server (inside Ubuntu)"
-    echo -e "  ${C}x11start${W}  - To start XFCE on Termux:X11"
-    echo -e "  ${C}x11stop${W}   - To stop XFCE + Termux:X11"
+    echo -e "  ${C}ubuntu${W}    - To start Ubuntu CLI"
+    echo -e "  ${C}vncstart${W}  - To start VNC desktop"
+    echo -e "  ${C}vncstop${W}   - To stop VNC desktop"
+    echo -e "  ${C}x11start${W}  - To start Termux X11 desktop"
+    echo
+    echo -e "${R}NOTE: Restart Termux app once for X11 changes to apply.${W}"
     rm -rf ~/install.sh
 }
 
@@ -195,5 +185,5 @@ install_desktop
 adding_user
 install_theme
 sound_fix
-create_x11start
+install_x11
 final_banner
