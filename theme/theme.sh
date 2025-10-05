@@ -9,20 +9,21 @@ C="$(printf '\033[1;36m')"
 
 sudo apt update
 # Install Debian equivalents - using desktop-base for Debian wallpapers instead of Ubuntu wallpapers
-sudo apt install yaru-theme-gtk yaru-theme-icon desktop-base plymouth-themes plank dconf-cli xfce4-panel-profiles xfce4-appmenu-plugin git -y
+# Adding python3-gi for xfce4-panel-profiles dependency
+sudo apt install yaru-theme-gtk yaru-theme-icon desktop-base plymouth-themes plank dconf-cli xfce4-panel-profiles xfce4-appmenu-plugin git python3-gi -y
 cd ~
-git clone https://github.com/ahksoft/ahk-modded-distro-ubuntu.git
-cd ~/modded-distro-ubuntu/theme/panel
+git clone https://github.com/ahksoft/ahk-modded-distro-ubuntu
+cd ~/ahk-modded-distro-ubuntu/theme/panel
 tar --sort=name --format ustar -cvjhf ubuntu.tar.bz2 config.txt
 mkdir -p ~/.local/share/xfce4-panel-profiles/
-mv ~/modded-distro-ubuntu/theme/panel/ubuntu.tar.bz2 ~/.local/share/xfce4-panel-profiles/
+mv ~/ahk-modded-distro-ubuntu/theme/panel/ubuntu.tar.bz2 ~/.local/share/xfce4-panel-profiles/
 dbus-launch xfce4-panel-profiles load ~/.local/share/xfce4-panel-profiles/ubuntu.tar.bz2
 mkdir -p ~/.config/autostart
-mv ~/modded-distro-ubuntu/theme/plank/plank.desktop ~/.config/autostart
+mv ~/ahk-modded-distro-ubuntu/theme/plank/plank.desktop ~/.config/autostart
 mkdir -p ~/.local/share/plank/themes
 mkdir -p ~/.config/plank/dock1/
-mv ~/modded-distro-ubuntu/theme/plank/launchers ~/.config/plank/dock1/
-mv ~/modded-distro-ubuntu/theme/plank/Azeny ~/.local/share/plank/themes
+mv ~/ahk-modded-distro-ubuntu/theme/plank/launchers ~/.config/plank/dock1/
+mv ~/ahk-modded-distro-ubuntu/theme/plank/Azeny ~/.local/share/plank/themes
 
 
 echo
@@ -47,5 +48,5 @@ sleep 10
 # Use Debian wallpaper instead of Ubuntu wallpaper
 dbus-launch xfconf-query -c xfce4-desktop -p $(dbus-launch xfconf-query -c xfce4-desktop -l | grep last-image) -s /usr/share/images/desktop-base/desktop-grub.png
 sleep 10
-cat ~/modded-distro-ubuntu/theme/plank/dock.ini | dbus-launch dconf load  /net/launchpad/plank/docks/dock1/
-rm -rf ~/modded-distro-ubuntu
+cat ~/ahk-modded-distro-ubuntu/theme/plank/dock.ini | dbus-launch dconf load  /net/launchpad/plank/docks/dock1/
+rm -rf ~/ahk-modded-distro-ubuntu
