@@ -113,7 +113,7 @@ install_theme(){
 
     [ -f "$user_home/.bashrc" ] && mv "$user_home/.bashrc" "$user_home/.bashrc.bak"
 
-    echo "wget https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/theme/theme.sh ; bash theme.sh; exit" >> "$user_home/.bashrc"
+    echo "wget https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/theme/debian_theme.sh ; bash debian_theme.sh ; exit" >> "$user_home/.bashrc"
 
     debian
 
