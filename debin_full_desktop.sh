@@ -20,7 +20,6 @@ banner(){
     printf "${Y}                Developed By Abir Hasan AHK\n${W}"
 }
 curl -fsSL https://raw.githubusercontent.com/ahksoft/Termux-SuperShell/code/setup-super-shell.sh -o ~/setup-super-shell.sh && chmod +x ~/setup-super-shell.sh && bash ~/setup-super-shell.sh
-zsh
 
 
 # --------------------------
