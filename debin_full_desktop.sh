@@ -166,10 +166,9 @@ install_x11(){
 # --------------------------
 final_banner(){
     proot-distro login --user debian
-    apt update && apt install sudo -y && apt install curl -y
     curl -fsSL https://raw.githubusercontent.com/ahksoft/Termux-SuperShell/code/linux-super-shell.sh -o ~/linux-super-shell.sh && chmod +x ~/linux-super-shell.sh && bash ~/linux-super-shell.sh
     logout
-    exit
+    
     banner
     echo
     echo -e "${G}Installation completed${W}\n"
