@@ -9,7 +9,7 @@
 ### Video Guide Here
 [![IMAGE](https://raw.githubusercontent.com/TecnicalBot/modded-distro/main/images/thumbnail.jpg)](https://youtu.be/gzbHaxuWT2E)
 
-### Tested on Android 12
+### Tested on Android 16
 
 ### Prerequisite
 - Android device (No Root Required)
@@ -17,9 +17,15 @@
 - VNC viewer, Get it from  <a href="https://play.google.com/store/apps/details?id=com.realvnc.viewer.android">playstore</a>
 - 4GB of Storage
 
-### Installation
-Paste following command in Termux
+### For ubuntu Installation
+Paste following command in Termux 
 ```bash
 curl https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/install.sh >> install.sh
+bash install.sh
+```
+### For Debian 
+Paste following command in Termux 
+```bash
+curl https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/debian.sh >> install.sh
 bash install.sh
 ```
