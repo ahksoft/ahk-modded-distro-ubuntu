@@ -25,13 +25,6 @@ mkdir -p ~/.config/plank/dock1/
 mv ~/ahk-modded-distro-ubuntu/theme/plank/launchers ~/.config/plank/dock1/
 mv ~/ahk-modded-distro-ubuntu/theme/plank/Azeny ~/.local/share/plank/themes
 
-
-echo
-echo ${G}"Create Your VNC Password"${W}
-vncstart
-sleep 60
-vncstop
-
 sleep 10
 dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
 sleep 10
