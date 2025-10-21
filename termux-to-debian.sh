@@ -174,6 +174,7 @@ else
             xfce4-terminal \
             nano \
             wget \
+            tigervnc-standalone-server \
             curl
         
         # Install Firefox ESR separately (may not be available in all repos)
