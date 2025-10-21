@@ -191,6 +191,10 @@ else
         # Clean up
         apt autoremove -y
         apt clean
+        echo "vncserver -geometry 1440x900 -xstartup /usr/bin/startxfce4" >> /usr/local/bin/vncstart
+        echo "vncserver -kill :* ; rm -rf /tmp/.X1-lock ; rm -rf /tmp/.X11-unix/X1" >> /usr/local/bin/vncstop
+        chmod +x /usr/local/bin/vncstart
+        chmod +x /usr/local/bin/vncstoop
     "
     print_success "XFCE4 and applications installed"
 fi
@@ -213,7 +217,7 @@ cat > ~/start-debian-x11.sh << 'STARTUP_SCRIPT'
 #!/data/data/com.termux/files/usr/bin/bash
 
 # Cleanup any existing processes
-pkill -f com.termux.x11 2>/dev/null
+#pkill -f com.termux.x11 2>/dev/null
 pkill -f pulseaudio 2>/dev/null
 pkill -f virgl_test_server 2>/dev/null
 sleep 1
@@ -249,7 +253,7 @@ echo "════════════════════════�
 echo ""
 echo "✓ Termux X11 started"
 echo "✓ Hardware Acceleration: $HW_ACCEL"
-echo "✓ XFCE4 Desktop Environment running"
+echo "✓ Desktop Environment running"
 echo "✓ Debian shell ready"
 echo ""
 echo "IMPORTANT: Open the 'Termux:X11' app to see the desktop!"
@@ -257,8 +261,8 @@ echo "Or type 'x11' - it will automatically switch to Termux X11"
 echo ""
 echo "Useful commands:"
 echo "  • x11              - Launch Termux X11 app"
-echo "  • glxinfo | grep renderer - Test GPU"
-echo "  • pkill startxfce4 - Stop desktop"
+echo "  • vncstart         - To start VNC desktop"  
+echo "  • vncstop          - To stop VNC desktop"
 echo "  • exit             - Close session"
 echo ""
 echo "════════════════════════════════════════════════════════"
@@ -340,7 +344,9 @@ echo -e "${YELLOW}TO DISABLE AUTO-START:${NC}"
 echo "   Edit ~/.bashrc and remove the auto-start section"
 echo ""
 echo -e "${YELLOW}USEFUL COMMANDS IN DEBIAN:${NC}"
-echo "   x11                      - Launch Termux X11 app"
+echo "   x11 - Launch Termux X11 app"
+echo "   vncstart                 - To start VNC desktop"
+echo "   vncstop                  - To stop VNC desktop"
 echo "   glxinfo | grep renderer  - Check GPU acceleration"
 echo "   htop                     - System monitor"
 echo "   firefox-esr              - Web browser"
