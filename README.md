@@ -29,3 +29,11 @@ Paste following command in Termux
 curl https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/debian.sh >> install.sh
 bash install.sh
 ```
+
+
+### For Termux Debian with Desktop Environment 
+Paste following command in Termux 
+```bash
+curl https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/termux-to-debian.sh >> termux-to-debian.sh
+bash termux-to-debian.sh
+```
