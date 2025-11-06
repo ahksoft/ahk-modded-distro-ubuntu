@@ -157,6 +157,8 @@ install_x11(){
     proot-distro login --user ubuntu --shared-tmp ubuntu -- env DISPLAY=:1 startxfce4" > $PREFIX/bin/x11start
 
     chmod +x $PREFIX/bin/x11start
+    wget https://raw.githubusercontent.com/ahksoft/ahk-modded-distro-ubuntu/main/ubuntu >> $PREFIX/bin/ubuntu
+    chmod +x $PREFIX/bin/ubuntu
 }
 
 # --------------------------
