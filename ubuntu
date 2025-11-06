@@ -1,0 +1,41 @@
+case "$1" in
+    -r)
+        proot-distro login ubuntu
+        ;;
+    -vnc)
+        proot-distro login ubuntu --user ubuntu --shared-tmp -- /bin/bash -c "vncstart"
+        ;;
+    -vncstop)
+        proot-distro login ubuntu --user ubuntu --shared-tmp -- /bin/bash -c "vncserver -kill :1"
+        ;;
+    -x11)
+        #kill -9 $(pgrep -f "termux.x11") 2>/dev/null
+        #export XDG_RUNTIME_DIR=${TMPDIR}
+        termux-x11 :1 >/dev/null 2>&1 &
+        sleep 3
+        proot-distro login --user ubuntu --shared-tmp ubuntu -- env DISPLAY=:1 startxfce4 >/dev/null 2>&1 &
+        sleep 1
+        echo "Switching to Termux X11 in 5 seconds"
+        sleep 10
+        am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity >/dev/null 2>&1 &
+        sleep 1
+        #proot-distro login ubuntu --user ubuntu --shared-tmp
+        ;;
+    -x11stop)
+        termux_x11_pid=$(pgrep -f /system/bin/app_process.*com.termux.x11)
+        if [ -n "$termux_x11_pid" ]; then
+            kill -9 "$termux_x11_pid" > /dev/null 2>&1
+            echo "Termux:X11 Stopped Successfully"
+        fi
+        ;;
+    -h)
+        echo -e "${G}Use ${C}ubuntu -r ${G}to login as root"
+        echo -e "${G}Use ${C}ubuntu -vnc ${G}to start VNC server"
+        echo -e "${G}Use ${C}ubuntu -vncstop ${G}to stop VNC server"
+        echo -e "${G}Use ${C}ubuntu -x11 ${G}to start X11 session"
+        echo -e "${G}Use ${C}ubuntu -x11stop ${G}to stop X11 session"
+        ;;
+    *)
+        proot-distro login --user ubuntu ubuntu
+        ;;
+esac
